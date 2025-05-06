@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalana Sasanka | Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#328E6E',
+                        secondary: '#67AE6E',
+                        accent: '#90C67C',
+                        light: '#E1EEBC',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #67AE6E;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .active:after {
+            width: 100%;
+        }
+        
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .blog-content h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0 1rem;
+            color: #328E6E;
+        }
+        
+        .blog-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .blog-content ul, .blog-content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+        
+        .blog-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .blog-content pre {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .blog-content code {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold text-primary">Kalana Sasanka</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="nav-link py-2 px-1">Home</a>
+                    <a href="index.html#about" class="nav-link py-2 px-1">About</a>
+                    <a href="index.html#experience" class="nav-link py-2 px-1">Experience</a>
+                    <a href="index.html#education" class="nav-link py-2 px-1">Education</a>
+                    <a href="blog.html" class="nav-link py-2 px-1 active">Blog</a>
+                    <a href="index.html#contact" class="nav-link py-2 px-1">Contact</a>
+                </div>
+                <button class="md:hidden focus:outline-none" id="menuToggle">
+                    <i class="fas fa-bars text-xl text-primary"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden bg-white w-full px-6 py-4 shadow-md" id="mobileMenu">
+        <div class="flex flex-col space-y-4">
+            <a href="index.html" class="nav-link py-2">Home</a>
+            <a href="index.html#about" class="nav-link py-2">About</a>
+            <a href="index.html#experience" class="nav-link py-2">Experience</a>
+            <a href="index.html#education" class="nav-link py-2">Education</a>
+            <a href="blog.html" class="nav-link py-2 active">Blog</a>
+            <a href="index.html#contact" class="nav-link py-2">Contact</a>
+        </div>
+    </div>
+
+    <!-- Blog Header -->
+    <section class="bg-primary bg-opacity-10 py-16">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">My <span class="text-primary">Blog</span></h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Thoughts, insights and tutorials on web development, software engineering and technology trends.</p>
+        </div>
+    </section>
+
+    <!-- Blog Content -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-12">
+                <!-- Main Blog Posts -->
+                <div class="lg:w-2/3">
+                    <!-- Blog Post Detail View (hidden by default) -->
+                    <div id="postDetail" class="hidden">
+                        <button onclick="hidePostDetail()" class="flex items-center text-primary mb-6 hover:underline">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to all posts
+                        </button>
+                        <div id="postContent" class="blog-content"></div>
+                        <div class="mt-12 pt-8 border-t border-gray-200">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">Leave a Comment</h3>
+                            <form class="space-y-4">
+                                <div>
+                                    <label for="commentName" class="block text-gray-700 font-medium mb-2">Name</label>
+                                    <input type="text" id="commentName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                <div>
+                                    <label for="commentEmail" class="block text-gray-700 font-medium mb-2">Email</label>
+                                    <input type="email" id="commentEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                <div>
+                                    <label for="commentMessage" class="block text-gray-700 font-medium mb-2">Comment</label>
+                                    <textarea id="commentMessage" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required></textarea>
+                                </div>
+                                <button type="submit" class="bg-primary hover:bg-opacity-90 text-white px-6 py-3 rounded-lg font-medium transition duration-300">Post Comment</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Blog Post List View -->
+                    <div id="postList">
+                        <!-- Search and Filter -->
+                        <div class="mb-12">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+                                <div class="w-full md:w-2/3">
+                                    <div class="relative">
+                                        <input type="text" placeholder="Search posts..." class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-1/3">
+                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <option value="">All Categories</option>
+                                        <option value="web-development">Web Development</option>
+                                        <option value="software-engineering">Software Engineering</option>
+                                        <option value="wordpress">WordPress</option>
+                                        <option value="tutorials">Tutorials</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button class="bg-primary text-white px-4 py-2 rounded-full text-sm">All</button>
+                                <button class="bg-gray-200 hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm">Web Development</button>
+                                <button class="bg-gray-200 hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm">Software Engineering</button>
+                                <button class="bg-gray-200 hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm">WordPress</button>
+                                <button class="bg-gray-200 hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm">Tutorials</button>
+                            </div>
+                        </div>
+
+                        <!-- Blog Posts -->
+                        <div class="space-y-12">
+                            <!-- Blog Post 1 -->
+                            <div class="bg-white rounded-lg overflow-hidden shadow-md blog-card transition duration-300">
+                                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Web Development" class="w-full h-64 object-cover">
+                                <div class="p-8">
+                                    <div class="flex items-center text-sm text-gray-500 mb-4">
+                                        <span>June 15, 2023</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-primary font-medium">Web Development</span>
+                                        <span class="mx-2">•</span>
+                                        <span>8 min read</span>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Modern Web Development Trends in 2023</h3>
+                                    <p class="text-gray-600 mb-6">Exploring the latest technologies and approaches that are shaping the future of web development this year, including serverless architectures, Jamstack, and WebAssembly.</p>
+                                    <div class="flex justify-between items-center">
+                                        <button onclick="showPostDetail('post1')" class="text-primary font-medium hover:underline">Read More</button>
+                                        <div class="flex items-center text-gray-500">
+                                            <i class="far fa-comment mr-1"></i>
+                                            <span class="text-sm">12</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Blog Post 2 -->
+                            <div class="bg-white rounded-lg overflow-hidden shadow-md blog-card transition duration-300">
+                                <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80" alt="WordPress" class="w-full h-64 object-cover">
+                                <div class="p-8">
+                                    <div class="flex items-center text-sm text-gray-500 mb-4">
+                                        <span>May 3, 2023</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-primary font-medium">WordPress</span>
+                                        <span class="mx-2">•</span>
+                                        <span>6 min read</span>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Optimizing WordPress Performance</h3>
+                                    <p class="text-gray-600 mb-6">Practical tips and techniques to make your WordPress site faster and more efficient for better user experience and SEO rankings.</p>
+                                    <div class="flex justify-between items-center">
+                                        <button onclick="showPostDetail('post2')" class="text-primary font-medium hover:underline">Read More</button>
+                                        <div class="flex items-center text-gray-500">
+                                            <i class="far fa-comment mr-1"></i>
+                                            <span class="text-sm">8</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Blog Post 3 -->
+                            <div class="bg-white rounded-lg overflow-hidden shadow-md blog-card transition duration-300">
+                                <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Software Engineering" class="w-full h-64 object-cover">
+                                <div class="p-8">
+                                    <div class="flex items-center text-sm text-gray-500 mb-4">
+                                        <span>April 18, 2023</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-primary font-medium">Software Engineering</span>
+                                        <span class="mx-2">•</span>
+                                        <span>10 min read</span>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Clean Code Principles Every Developer Should Know</h3>
+                                    <p class="text-gray-600 mb-6">Essential clean code practices that will make your software more maintainable and your life as a developer easier, with practical examples.</p>
+                                    <div class="flex justify-between items-center">
+                                        <button onclick="showPostDetail('post3')" class="text-primary font-medium hover:underline">Read More</button>
+                                        <div class="flex items-center text-gray-500">
+                                            <i class="far fa-comment mr-1"></i>
+                                            <span class="text-sm">15</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Blog Post 4 -->
+                            <div class="bg-white rounded-lg overflow-hidden shadow-md blog-card transition duration-300">
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="React" class="w-full h-64 object-cover">
+                                <div class="p-8">
+                                    <div class="flex items-center text-sm text-gray-500 mb-4">
+                                        <span>March 22, 2023</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-primary font-medium">Web Development</span>
+                                        <span class="mx-2">•</span>
+                                        <span>7 min read</span>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">React Hooks: A Comprehensive Guide</h3>
+                                    <p class="text-gray-600 mb-6">Understanding React Hooks and how they can simplify your functional components while providing powerful capabilities.</p>
+                                    <div class="flex justify-between items-center">
+                                        <button onclick="showPostDetail('post4')" class="text-primary font-medium hover:underline">Read More</button>
+                                        <div class="flex items-center text-gray-500">
+                                            <i class="far fa-comment mr-1"></i>
+                                            <span class="text-sm">9</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-16 flex justify-center">
+                            <nav class="flex items-center space-x-2">
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-primary hover:text-white transition duration-300">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg">1</button>
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-primary hover:text-white transition duration-300">2</button>
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-primary hover:text-white transition duration-300">3</button>
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-primary hover:text-white transition duration-300">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="lg:w-1/3">
+                    <div class="bg-gray-50 rounded-lg p-6 sticky top-24">
+                        <!-- About Widget -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">About Me</h3>
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Kalana Sasanka" class="w-24 h-24 rounded-full object-cover mx-auto mb-4">
+                            <p class="text-gray-600 mb-4">I'm Kalana Sasanka, a Web & Software Developer from Galle, Sri Lanka with rich experience in website design and development.</p>
+                            <a href="index.html#about" class="text-primary font-medium hover:underline">Read More</a>
+                        </div>
+
+                        <!-- Categories Widget -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Categories</h3>
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="#" class="flex justify-between items-center text-gray-600 hover:text-primary transition duration-300">
+                                        <span>Web Development</span>
+                                        <span class="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">12</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex justify-between items-center text-gray-600 hover:text-primary transition duration-300">
+                                        <span>Software Engineering</span>
+                                        <span class="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">8</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex justify-between items-center text-gray-600 hover:text-primary transition duration-300">
+                                        <span>WordPress</span>
+                                        <span class="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">5</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex justify-between items-center text-gray-600 hover:text-primary transition duration-300">
+                                        <span>Tutorials</span>
+                                        <span class="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">10</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex justify-between items-center text-gray-600 hover:text-primary transition duration-300">
+                                        <span>Technology</span>
+                                        <span class="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">7</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Popular Posts Widget -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Popular Posts</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Web Development" class="w-16 h-16 object-cover rounded-lg mr-4">
+                                    <div>
+                                        <a href="#" class="text-gray-800 font-medium hover:text-primary transition duration-300">Modern Web Development Trends</a>
+                                        <p class="text-sm text-gray-500">June 15, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Clean Code" class="w-16 h-16 object-cover rounded-lg mr-4">
+                                    <div>
+                                        <a href="#" class="text-gray-800 font-medium hover:text-primary transition duration-300">Clean Code Principles</a>
+                                        <p class="text-sm text-gray-500">April 18, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="React" class="w-16 h-16 object-cover rounded-lg mr-4">
+                                    <div>
+                                        <a href="#" class="text-gray-800 font-medium hover:text-primary transition duration-300">React Hooks Guide</a>
+                                        <p class="text-sm text-gray-500">March 22, 2023</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tags Widget -->
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Tags</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">JavaScript</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">React</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">Node.js</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">PHP</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">WordPress</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">CSS</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">HTML</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">Performance</a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white text-gray-600 px-3 py-1 rounded-full text-sm transition duration-300">Security</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-16 bg-primary text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-6">Subscribe to My Newsletter</h2>
+            <p class="text-light max-w-2xl mx-auto mb-8">Get the latest articles, tutorials, and resources delivered straight to your inbox.</p>
+            <form class="max-w-md mx-auto flex">
+                <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded-l-lg focus:outline-none text-gray-800">
+                <button type="submit" class="bg-secondary hover:bg-opacity-90 px-6 py-3 rounded-r-lg font-medium transition duration-300">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h2 class="text-2xl font-bold text-light">Kalana Sasanka</h2>
+                    <p class="text-gray-400 mt-2">Web & Software Developer</p>
+                </div>
+                
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex space-x-6 mb-4">
+                        <a href="#" class="text-gray-400 hover:text-light transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-light transition duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-light transition duration-300">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-light transition duration-300">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-400 text-sm">© 2023 Kalana Sasanka. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Blog post content
+        const posts = {
+            post1: {
+                title: "Modern Web Development Trends in 2023",
+                date: "June 15, 2023",
+                category: "Web Development",
+                readTime: "8 min read",
+                comments: "12",
+                content: `
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Web Development">
+                    
+                    <p>The web development landscape is constantly evolving, and 2023 has brought some exciting new trends that are shaping how we build for the web. In this post, I'll explore the most significant trends that every developer should be aware of.</p>
+                    
+                    <h2>1. Serverless Architectures</h2>
+                    <p>Serverless computing continues to gain traction, allowing developers to focus on writing code without worrying about infrastructure management. Platforms like AWS Lambda, Azure Functions, and Google Cloud Functions are making it easier than ever to deploy scalable applications.</p>
+                    
+                    <h2>2. Jamstack Revolution</h2>
+                    <p>The Jamstack (JavaScript, APIs, and Markup) architecture is becoming the go-to approach for modern web development. By decoupling the frontend from the backend, Jamstack offers better performance, higher security, and easier scaling.</p>
+                    
+                    <h2>3. WebAssembly (Wasm)</h2>
+                    <p>WebAssembly is enabling near-native performance in the browser, opening up possibilities for complex applications like video editing, 3D games, and scientific simulations to run smoothly in web browsers.</p>
+                    
+                    <h2>4. Progressive Web Apps (PWAs)</h2>
+                    <p>PWAs are blurring the line between web and mobile apps, offering offline capabilities, push notifications, and app-like experiences. With major browsers now supporting PWA features, adoption is skyrocketing.</p>
+                    
+                    <h2>5. AI-Powered Development</h2>
+                    <p>AI tools like GitHub Copilot are changing how developers write code, offering intelligent suggestions and automating repetitive tasks. This trend is only going to accelerate in the coming years.</p>
+                    
+                    <p>These trends represent just the tip of the iceberg in the rapidly evolving web development space. Staying current with these technologies will ensure you're building modern, efficient, and user-friendly web applications.</p>
+                `
+            },
+            post2: {
+                title: "Optimizing WordPress Performance",
+                date: "May 3, 2023",
+                category: "WordPress",
+                readTime: "6 min read",
+                comments: "8",
+                content: `
+                    <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80" alt="WordPress">
+                    
+                    <p>WordPress powers over 40% of the web, but its flexibility can sometimes come at the cost of performance. In this guide, I'll share practical techniques to make your WordPress site faster and more efficient.</p>
+                    
+                    <h2>1. Choose the Right Hosting</h2>
+                    <p>Your hosting provider plays a crucial role in performance. Consider managed WordPress hosting or VPS solutions for better resources and optimizations specifically for WordPress.</p>
+                    
+                    <h2>2. Implement Caching</h2>
+                    <p>Use plugins like WP Rocket or W3 Total Cache to implement page caching, object caching, and browser caching. This can dramatically reduce server load and improve response times.</p>
+                    
+                    <h2>3. Optimize Images</h2>
+                    <p>Large, unoptimized images are one of the biggest performance killers. Use plugins like Smush or EWWW Image Optimizer to compress images without losing quality.</p>
+                    
+                    <h2>4. Minify CSS and JavaScript</h2>
+                    <p>Reducing the size of your CSS and JS files through minification and concatenation can significantly improve load times. Many caching plugins include this functionality.</p>
+                    
+                    <h2>5. Use a Content Delivery Network (CDN)</h2>
+                    <p>A CDN serves your static assets from servers closest to your visitors, reducing latency. Services like Cloudflare or StackPath integrate easily with WordPress.</p>
+                    
+                    <h2>6. Database Optimization</h2>
+                    <p>Regularly clean up your database by removing post revisions, spam comments, and transients. Plugins like WP-Optimize can automate this process.</p>
+                    
+                    <p>By implementing these strategies, you can dramatically improve your WordPress site's performance, leading to better user experience and higher search engine rankings.</p>
+                `
+            },
+            post3: {
+                title: "Clean Code Principles Every Developer Should Know",
+                date: "April 18, 2023",
+                category: "Software Engineering",
+                readTime: "10 min read",
+                comments: "15",
+                content: `
+                    <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Clean Code">
+                    
+                    <p>Writing clean code is an essential skill for any serious developer. It makes your software more maintainable, reduces bugs, and makes collaboration easier. Here are the fundamental principles I've learned throughout my career.</p>
+                    
+                    <h2>1. Meaningful Names</h2>
+                    <p>Variables, functions, and classes should have names that reveal their intent. Avoid abbreviations and single-letter names unless they're extremely common in your domain.</p>
+                    <pre><code>// Bad
+                    function p(d) {
+                        return d * 3.14;
+                    }
+                    
+                    // Good
+                    function calculateCircumference(diameter) {
+                        return diameter * Math.PI;
+                    }</code></pre>
+                    
+                    <h2>2. Single Responsibility Principle</h2>
+                    <p>Each function or class should have one responsibility. If you can describe what a function does with an "and", it's probably doing too much.</p>
+                    
+                    <h2>3. Don't Repeat Yourself (DRY)</h2>
+                    <p>Repeated code is a maintenance nightmare. Extract common functionality into reusable functions or classes.</p>
+                    
+                    <h2>4. Keep Functions Small</h2>
+                    <p>Functions should generally be short (less than 20 lines) and do one thing well. If a function is getting long, consider breaking it into smaller functions.</p>
+                    
+                    <h2>5. Comments Are a Last Resort</h2>
+                    <p>Well-written code should be self-documenting. Only use comments to explain why something is done a certain way, not what the code is doing.</p>
+                    
+                    <h2>6. Consistent Formatting</h2>
+                    <p>Use consistent indentation, spacing, and brace styles throughout your codebase. Consider using linters and formatters to automate this.</p>
+                    
+                    <p>Adopting these clean code principles will make you a more effective developer and your codebase more pleasant to work with for everyone on your team.</p>
+                `
+            },
+            post4: {
+                title: "React Hooks: A Comprehensive Guide",
+                date: "March 22, 2023",
+                category: "Web Development",
+                readTime: "7 min read",
+                comments: "9",
+                content: `
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="React">
+                    
+                    <p>React Hooks, introduced in React 16.8, have revolutionized how we write React components. They allow you to use state and other React features without writing classes. In this guide, I'll cover the most important hooks and how to use them effectively.</p>
+                    
+                    <h2>1. useState</h2>
+                    <p>The useState hook is the most basic hook for managing local state in functional components.</p>
+                    <pre><code>import React, { useState } from 'react';
+                    
+                    function Counter() {
+                        const [count, setCount] = useState(0);
+                    
+                        return (
+                            &lt;div&gt;
+                                &lt;p&gt;You clicked {count} times&lt;/p&gt;
+                                &lt;button onClick={() => setCount(count + 1)}&gt;
+                                    Click me
+                                &lt;/button&gt;
+                            &lt;/div&gt;
+                        );
+                    }</code></pre>
+                    
+                    <h2>2. useEffect</h2>
+                    <p>The useEffect hook lets you perform side effects in function components, replacing lifecycle methods like componentDidMount and componentDidUpdate.</p>
+                    
+                    <h2>3. useContext</h2>
+                    <p>useContext provides a way to pass data through the component tree without having to pass props down manually at every level.</p>
+                    
+                    <h2>4. useReducer</h2>
+                    <p>useReducer is usually preferable to useState when you have complex state logic that involves multiple sub-values or when the next state depends on the previous one.</p>
+                    
+                    <h2>5. Custom Hooks</h2>
+                    <p>You can create your own hooks to extract component logic into reusable functions. This is one of the most powerful features of hooks.</p>
+                    <pre><code>function useWindowWidth() {
+                        const [width, setWidth] = useState(window.innerWidth);
+                    
+                        useEffect(() => {
+                            const handleResize = () => setWidth(window.innerWidth);
+                            window.addEventListener('resize', handleResize);
+                            return () => window.removeEventListener('resize', handleResize);
+                        }, []);
+                    
+                        return width;
+                    }</code></pre>
+                    
+                    <p>React Hooks have fundamentally changed how we write React applications, making code more reusable, composable, and easier to understand. Mastering hooks is essential for any modern React developer.</p>
+                `
+            }
+        };
+
+        // Show post detail view
+        function showPostDetail(postId) {
+            const post = posts[postId];
+            const postList = document.getElementById('postList');
+            const postDetail = document.getElementById('postDetail');
+            const postContent = document.getElementById('postContent');
+            
+            // Populate post content
+            postContent.innerHTML = `
+                <div class="flex items-center text-sm text-gray-500 mb-6">
+                    <span>${post.date}</span>
+                    <span class="mx-2">•</span>
+                    <span class="text-primary font-medium">${post.category}</span>
+                    <span class="mx-2">•</span>
+                    <span>${post.readTime}</span>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">${post.title}</h1>
+                ${post.content}
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-xl font-bold text-gray-800">${post.comments} Comments</h3>
+                        <div class="flex space-x-4">
+                            <span class="text-gray-600">Share:</span>
+                            <a href="#" class="text-gray-600 hover:text-primary"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="text-gray-600 hover:text-primary"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-gray-600 hover:text-primary"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments -->
+                    <div class="space-y-6 mb-8">
+                        <!-- Comment 1 -->
+                        <div class="flex space-x-4">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-12 h-12 rounded-full">
+                            <div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-800">Sarah Johnson</h4>
+                                    <p class="text-sm text-gray-500 mb-2">April 20, 2023</p>
+                                    <p class="text-gray-600">Great article! I've been using these principles in my recent project and it's made a huge difference in code maintainability.</p>
+                                </div>
+                                <button class="text-sm text-primary font-medium mt-2 hover:underline">Reply</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Comment 2 -->
+                        <div class="flex space-x-4 ml-16">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-12 h-12 rounded-full">
+                            <div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-800">Michael Chen</h4>
+                                    <p class="text-sm text-gray-500 mb-2">April 22, 2023</p>
+                                    <p class="text-gray-600">I'd add one more point about testing - clean code is much easier to write unit tests for. The single responsibility principle especially helps with this.</p>
+                                </div>
+                                <button class="text-sm text-primary font-medium mt-2 hover:underline">Reply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Switch views
+            postList.classList.add('hidden');
+            postDetail.classList.remove('hidden');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Hide post detail view
+        function hidePostDetail() {
+            const postList = document.getElementById('postList');
+            const postDetail = document.getElementById('postDetail');
+            
+            postList.classList.remove('hidden');
+            postDetail.classList.add('hidden');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
